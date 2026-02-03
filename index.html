@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz Shineray Moto Fácil</title>
+
+  <!-- Meta Pixel (sem PageView automático) -->
+  <script>
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '853034203753583');
+    // NÃO chamamos fbq('track', 'PageView') aqui.
+  </script>
+
+  <style>
+    :root{
+      --brand:#d90404;
+      --brand-dark:#b60303;
+      --bg:#f7f7f8;
+      --card:#ffffff;
+      --text:#111111;
+      --muted:#6b7280;
+      --green:#16a34a;
+      --green-dark:#15803d;
+      --blue:#2563eb;
+      --blue-dark:#1d4ed8;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:24px 12px;
+      background:radial-gradient(circle at top,#ffe5e5 0,#f7f7f8 40%,#e5e7eb 100%);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+    }
+    .quiz-shell{
+      width:100%;
+      max-width:780px;
+      background:var(--card);
+      border-radius:20px;
+      box-shadow:0 18px 40px rgba(0,0,0,.12);
+      padding:20px 18px 22px;
+    }
+    @media(min-width:768px){
+      .quiz-shell{padding:26px 32px 28px;}
+    }
+
+    /* topo */
+    .quiz-header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      margin-bottom:18px;
+    }
+    .logo-badge{
+      width:56px;height:56px;
+      border-radius:18px;
+      background:#111;
+      display:grid;
+      place-items:center;
+      box-shadow:0 8px 22px rgba(0,0,0,.25);
+    }
+    .logo-badge img{
+      max-width:80%;
+      max-height:80%;
+      object-fit:contain;
+    }
+    .quiz-title{
+      font-size:20px;
+      font-weight:800;
+      text-align:center;
+      color:var(--brand-dark);
+    }
+    .quiz-sub{
+      font-size:13px;
+      text-align:center;
+      color:var(--muted);
+      max-width:420px;
+    }
+
+    /* barra de progresso */
+    .progress-wrap{
+      margin-top:8px;
+      width:100%;
+    }
+    .progress-bar{
+      width:100%;
+      height:8px;
+      border-radius:999px;
+      background:#e5e7eb;
+      overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;
+      width:0;
+      border-radius:999px;
+      background:linear-gradient(90deg,#22c55e,#16a34a);
+      transition:width .3s ease;
+    }
+    .progress-label{
+      margin-top:4px;
+      font-size:11px;
+      text-align:center;
+      color:#4b5563;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:600;
+    }
+
+    /* pergunta */
+    .quiz-main{
+      margin-top:18px;
+    }
+    .pill-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#e0f2fe;
+      color:#0f172a;
+      font-size:11px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:10px;
+    }
+    .pill-tag span{font-size:13px;}
+    .question-title{
+      font-size:22px;
+      font-weight:800;
+      line-height:1.25;
+      margin-bottom:8px;
+      text-align:center;
+    }
+    .question-desc{
+      font-size:14px;
+      color:#4b5563;
+      text-align:center;
+      max-width:640px;
+      margin:0 auto 16px;
+    }
+
+    .options{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:8px;
+    }
+    .option-btn{
+      border:0;
+      width:100%;
+      text-align:left;
+      border-radius:999px;
+      padding:12px 18px;
+      font-size:15px;
+      font-weight:600;
+      color:#ffffff;
+      background:var(--green);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:8px;
+      box-shadow:0 6px 18px rgba(22,163,74,.35);
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease;
+    }
+    .option-btn span.emoji{font-size:18px;}
+    .option-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(22,163,74,.4);
+      background:var(--green-dark);
+    }
+
+    .small-hint{
+      margin-top:10px;
+      font-size:12px;
+      color:#6b7280;
+      text-align:center;
+    }
+
+    /* resultado (à vista/cartão) */
+    .result-box{
+      display:none;
+      margin-top:16px;
+      padding:16px 14px 18px;
+      border-radius:16px;
+      background:#fef2f2;
+      border:1px solid #fecaca;
+    }
+    .result-title{
+      font-size:18px;
+      font-weight:800;
+      color:var(--brand-dark);
+      margin-bottom:4px;
+    }
+    .result-text{
+      font-size:14px;
+      color:#374151;
+      margin-bottom:8px;
+    }
+    .result-extra{
+      font-size:12px;
+      color:#6b7280;
+    }
+
+    .result-moto{
+      margin:12px auto 10px;
+      max-width:260px;
+      display:none;
+    }
+    .result-moto img{
+      width:100%;
+      display:block;
+      border-radius:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+      object-fit:cover;
+    }
+
+    /* vendedores */
+    .sellers-wrap{
+      margin-top:18px;
+      border-top:1px dashed #e5e7eb;
+      padding-top:14px;
+    }
+    .sellers-title{
+      font-size:14px;
+      font-weight:700;
+      margin-bottom:8px;
+      color:#111827;
+    }
+    .sellers-grid{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .seller-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:14px;
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+    }
+    .seller-avatar{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      overflow:hidden;
+      background:#e5e7eb;
+      display:grid;
+      place-items:center;
+      animation:float 3s ease-in-out infinite;
+    }
+    .seller-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .seller-info{flex:1;min-width:0;}
+    .seller-name{font-size:14px;font-weight:700;margin-bottom:2px;}
+    .seller-tag{font-size:11px;color:#6b7280;}
+    .seller-btn{
+      border:0;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:12px;
+      font-weight:700;
+      background:#22c55e;
+      color:#ffffff;
+      cursor:pointer;
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      text-decoration:none;
+    }
+
+    /* fluxo financiamento */
+    .finance-box{
+      display:none;
+      margin-top:16px;
+      padding:16px 14px 18px;
+      border-radius:16px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+    }
+    .finance-title{
+      font-size:18px;
+      font-weight:800;
+      color:#1d4ed8;
+      margin-bottom:6px;
+    }
+    .finance-text{
+      font-size:14px;
+      color:#1f2937;
+      margin-bottom:10px;
+    }
+    .finance-note{
+      font-size:12px;
+      color:#4b5563;
+      margin-top:6px;
+      background:#ffffff;
+      border:1px dashed #c7d2fe;
+      border-radius:12px;
+      padding:10px 10px;
+    }
+    .moto-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    @media(min-width:680px){
+      .moto-grid{grid-template-columns:repeat(3, minmax(0, 1fr));}
+    }
+    .moto-card{
+      border:1px solid #dbeafe;
+      background:#ffffff;
+      border-radius:16px;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      box-shadow:0 8px 18px rgba(37,99,235,.10);
+    }
+    .moto-card img{
+      width:100%;
+      height:120px;
+      object-fit:cover;
+      border-radius:12px;
+      background:#f3f4f6;
+    }
+    .moto-name{
+      font-size:13px;
+      font-weight:800;
+      color:#0f172a;
+      line-height:1.2;
+    }
+    .moto-cta{
+      border:0;
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--blue);
+      color:#ffffff;
+      transition:transform .08s ease, background .12s ease, box-shadow .08s ease;
+      box-shadow:0 10px 20px rgba(37,99,235,.25);
+    }
+    .moto-cta:hover{
+      transform:translateY(-1px);
+      background:var(--blue-dark);
+      box-shadow:0 14px 26px rgba(37,99,235,.28);
+    }
+
+    @keyframes float{
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(-4px);}
+    }
+
+    .restart{
+      margin-top:12px;
+      font-size:11px;
+      text-align:center;
+      color:#9ca3af;
+      cursor:pointer;
+      text-decoration:underline;
+    }
+  </style>
+</head>
+<body>
+
+<noscript>
+  <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id=853034203753583&ev=PageView&noscript=1"/>
+</noscript>
+
+<div class="quiz-shell">
+  <div class="quiz-header">
+    <div class="logo-badge">
+      <img src="logo.png" alt="Shineray Moto Fácil">
+    </div>
+    <div class="quiz-title">Qual Shineray combina mais com você?</div>
+    <div class="quiz-sub">
+      Responda algumas perguntinhas rápidas e descubra sua moto ideal.
+      No final, você escolhe: simular financiamento (PAN) ou falar com um vendedor no WhatsApp.
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Pergunta 1 de 6</div>
+    </div>
+  </div>
+
+  <div class="quiz-main" id="quizMain"></div>
+
+  <!-- resultado à vista/cartão (fluxo original com vendedores) -->
+  <div class="result-box" id="resultBox">
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-text" id="resultText"></div>
+    <div class="result-extra" id="resultExtra"></div>
+
+    <div class="result-moto" id="resultMoto">
+      <img id="resultMotoImg" src="" alt="">
+    </div>
+
+    <div class="sellers-wrap">
+      <div class="sellers-title">Agora escolha com quem você quer falar no WhatsApp:</div>
+      <div class="sellers-grid" id="sellersGrid"></div>
+    </div>
+
+    <div class="restart" id="restartBtn1">Refazer quiz</div>
+  </div>
+
+  <!-- resultado financiamento (novo fluxo PAN) -->
+  <div class="finance-box" id="financeBox">
+    <div class="finance-title" id="financeTitle"></div>
+    <div class="finance-text" id="financeText"></div>
+
+    <div class="result-moto" id="financeMoto">
+      <img id="financeMotoImg" src="" alt="">
+    </div>
+
+    <div class="finance-note" id="financeNote"></div>
+
+    <div style="margin-top:12px;">
+      <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px;">
+        Escolha a moto para simular o financiamento:
+      </div>
+      <div class="moto-grid" id="financeMotoGrid"></div>
+    </div>
+
+    <div class="restart" id="restartBtn2">Refazer quiz</div>
+  </div>
+</div>
+
+<script>
+  // ===== CONTROLE DE LEAD NO LOCALSTORAGE (15 DIAS) =====
+  const LEAD_LS_KEY = 'mf_quiz_lead_tracked';
+  const LEAD_LS_TTL_MS = 15 * 24 * 60 * 60 * 1000; // 15 dias
+
+  function hasRecentLead(){
+    try{
+      const raw = localStorage.getItem(LEAD_LS_KEY);
+      if(!raw) return false;
+      const ts = parseInt(raw, 10);
+      if(isNaN(ts)) return false;
+      return (Date.now() - ts) < LEAD_LS_TTL_MS;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function markLead(){
+    try{
+      localStorage.setItem(LEAD_LS_KEY, String(Date.now()));
+    }catch(e){}
+  }
+
+  function trackLeadEvents(moto, sellerName){
+    if(typeof fbq !== 'function') return;
+    if(hasRecentLead()) return;
+
+    const payload = {
+      content_name: 'Quiz Shineray Moto Fácil',
+      content_category: moto,
+      seller_name: sellerName
+    };
+
+    fbq('track', 'PageView', payload);
+    fbq('track', 'ViewContent', payload);
+    fbq('track', 'Lead', payload);
+
+    markLead();
+  }
+
+  // ===== CONTROLE DE LEAD PARA SIMULAÇÃO PAN (separado do lead de vendedor) =====
+  const PAN_LEAD_LS_KEY = 'mf_quiz_pan_lead_tracked';
+  const PAN_LEAD_LS_TTL_MS = 15 * 24 * 60 * 60 * 1000; // 15 dias
+
+  function hasRecentPanLead(){
+    try{
+      const raw = localStorage.getItem(PAN_LEAD_LS_KEY);
+      if(!raw) return false;
+      const ts = parseInt(raw, 10);
+      if(isNaN(ts)) return false;
+      return (Date.now() - ts) < PAN_LEAD_LS_TTL_MS;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function markPanLead(){
+    try{
+      localStorage.setItem(PAN_LEAD_LS_KEY, String(Date.now()));
+    }catch(e){}
+  }
+
+  function trackPanLeadEvents(moto){
+    if(typeof fbq !== 'function') return;
+    if(hasRecentPanLead()) return;
+
+    const payload = {
+      content_name: 'Quiz Shineray Moto Fácil',
+      content_category: moto,
+      seller_name: 'PAN'
+    };
+
+    fbq('track', 'PageView', payload);
+    fbq('track', 'ViewContent', payload);
+    fbq('track', 'Lead', payload);
+
+    markPanLead();
+  }
+
+  // ===== ENVIO PRO BACKEND (DASHBOARD) =====
+  function sendBackendEvent(payload) {
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      }).catch(()=>{});
+    } catch (e) {}
+  }
+
+  // ===============================
+  // 🔗 LINKS DO PAN (JÁ PREENCHIDOS)
+  // ===============================
+  // ⚠️ IMPORTANTE: as chaves precisam ser IGUAIS às chaves do MOTO_IMAGES e do computeMoto()
+  const PAN_LINKS = {
+    'JET 125SS': 'https://mobiauto.com.br/details/20220478',
+    'JET 50S': 'https://mobiauto.com.br/details/20220528',
+    'SHI 175 EFI': 'https://www.mobiauto.com.br/comprar/details/23297418',
+    'JEF 150': 'https://www.mobiauto.com.br/comprar/details/20220462'
+  };
+
+  // ===== CONFIGURAÇÃO DAS PERGUNTAS =====
+  const questions = [
+    {
+      key:'motivo',
+      tag:'Pergunta',
+      title:'Por que você está querendo uma moto agora?',
+      desc:'Seja sincero(a): isso ajuda a gente a te indicar a moto que faz mais sentido pro seu momento.',
+      options:[
+        {value:'economia', emoji:'💸', label:'Economia e fugir de ônibus/uber'},
+        {value:'trabalho', emoji:'💼', label:'Trabalho / fazer entregas / ganhar mais'},
+        {value:'conforto', emoji:'😌', label:'Mais conforto e liberdade no dia a dia'}
+      ]
+    },
+    {
+      key:'uso',
+      tag:'Pergunta',
+      title:'Como você vai usar a moto na maior parte do tempo?',
+      desc:'Pensa na sua rotina real, não só no sonho. 😄',
+      options:[
+        {value:'cidade', emoji:'🏙️', label:'Principalmente dentro da cidade'},
+        {value:'trabalho', emoji:'⏱️', label:'Várias horas por dia, pra trabalhar mesmo'},
+        {value:'misto', emoji:'🛣️', label:'Cidade + umas estradinhas curtas'}
+      ]
+    },
+    {
+      key:'prioridade',
+      tag:'Pergunta',
+      title:'O que pesa mais na sua decisão?',
+      desc:'Todo mundo quer tudo, mas qual é o fator nº1 pra você?',
+      options:[
+        {value:'economia', emoji:'⛽', label:'Gastar o mínimo possível com combustível'},
+        {value:'equilibrio', emoji:'⚖️', label:'Equilíbrio entre economia e conforto'},
+        {value:'potencia', emoji:'🔥', label:'Força, cilindrada e presença'}
+      ]
+    },
+    {
+      key:'categoria',
+      tag:'Pergunta',
+      title:'Qual tipo de moto você se imagina pilotando?',
+      desc:'Vai no estilo que mais combina com a sua vibe.',
+      options:[
+        {value:'50cc', emoji:'🟢', label:'Cinquentinha (50cc) leve e econômica'},
+        {value:'scooter', emoji:'🛵', label:'Scooter(Rio 125, Urban...) automática pro dia a dia'},
+        {value:'trail_street', emoji:'🏍️', label:'Moto maior (Shi 175/Storm...) pra encarar mais coisa'}
+      ]
+    },
+    {
+      key:'pagamento',
+      tag:'Pergunta',
+      title:'E a forma de pagamento, como você pensa em fazer?',
+      desc:'Só pra gente já direcionar pra condição que faz mais sentido.',
+      options:[
+        {value:'sem_entrada', emoji:'💳', label:'Sem entrada, parcelado em várias vezes'},
+        {value:'com_entrada', emoji:'💰', label:'Com entrada pra reduzir as parcelas'},
+        {value:'avista', emoji:'✅', label:'À vista, se a proposta valer muito a pena'},
+        {value:'decidindo', emoji:'🤔', label:'Ainda estou decidindo'}
+      ]
+    },
+    {
+      key:'forma_compra',
+      tag:'Final',
+      title:'Agora, como você prefere seguir?',
+      desc:'Escolha a opção que mais combina com você agora. Se for financiamento, você vai direto pra simulação do PAN.',
+      options:[
+        {value:'financiamento', emoji:'🏦', label:'Quero simular um financiamento'},
+        {value:'avista_cartao', emoji:'💬', label:'Vou comprar à vista ou no cartão (quero falar com vendedor)'}
+      ]
+    }
+  ];
+
+  // ===== IMAGENS DAS MOTOS (PASTA RAIZ) =====
+  const MOTO_IMAGES = {
+    'JET 125SS':'moto-rio-125.png',
+    'JET 50S':'moto-jet-50s.png',
+    'SHI 175 EFI':'moto-shi-175-efi.png',
+    'JEF 150':'moto-jef-150.png'
+  };
+
+  // ===== CONFIGURAÇÃO DOS VENDEDORES =====
+  const SELLERS = [
+    { name:'Gabryel (Itamaraju)', phone:'557399650031', avatar:'gabryel.png', tag:'Consultor de Vendas' },
+    { name:'Gabriel (Teixeira)', phone:'557399630031', avatar:'gabri.png', tag:'Consultora de Vendas' },
+    { name:'Nilton (Eunápolis)', phone:'557399170778', avatar:'nilton.png', tag:'Consultor de Vendas' }
+  ];
+
+  const quizMain   = document.getElementById('quizMain');
+  const progressFill  = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+
+  // resultado original
+  const resultBox   = document.getElementById('resultBox');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultText  = document.getElementById('resultText');
+  const resultExtra = document.getElementById('resultExtra');
+  const sellersGrid = document.getElementById('sellersGrid');
+  const restartBtn1 = document.getElementById('restartBtn1');
+  const resultMoto    = document.getElementById('resultMoto');
+  const resultMotoImg = document.getElementById('resultMotoImg');
+
+  // resultado financiamento
+  const financeBox   = document.getElementById('financeBox');
+  const financeTitle = document.getElementById('financeTitle');
+  const financeText  = document.getElementById('financeText');
+  const financeNote  = document.getElementById('financeNote');
+  const financeMotoGrid = document.getElementById('financeMotoGrid');
+  const restartBtn2  = document.getElementById('restartBtn2');
+  const financeMoto    = document.getElementById('financeMoto');
+  const financeMotoImg = document.getElementById('financeMotoImg');
+
+  let currentStep = 0;
+  const answers = {};
+  let quizStartTracked = false;
+
+  function hideAllViews(){
+    quizMain.style.display = 'none';
+    resultBox.style.display = 'none';
+    financeBox.style.display = 'none';
+  }
+
+  function renderQuestion(){
+    const total = questions.length;
+    const q = questions[currentStep];
+
+    if (!quizStartTracked && currentStep === 0) {
+      quizStartTracked = true;
+      sendBackendEvent({ type: 'quiz_start' });
+    }
+
+    sendBackendEvent({
+      type: 'step_view',
+      step: currentStep + 1,
+      questionKey: q.key
+    });
+
+    const percent = ((currentStep) / total) * 100;
+    progressFill.style.width = `${percent}%`;
+    progressLabel.textContent = `Pergunta ${currentStep+1} de ${total}`;
+
+    quizMain.innerHTML = `
+      <div class="pill-tag">📋 <span>${q.tag}</span></div>
+      <div class="question-title">${q.title}</div>
+      <div class="question-desc">${q.desc}</div>
+      <div class="options">
+        ${q.options.map(opt=>`
+          <button class="option-btn" data-value="${opt.value}">
+            <span class="emoji">${opt.emoji}</span>
+            <span>${opt.label}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="small-hint">Toque em uma das opções para continuar.</div>
+    `;
+
+    document.querySelectorAll('.option-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const value = btn.getAttribute('data-value');
+        answers[q.key] = value;
+
+        sendBackendEvent({
+          type: 'answer',
+          questionKey: q.key,
+          optionValue: value
+        });
+
+        if(q.key === 'forma_compra'){
+          sendBackendEvent({ type: 'finance_intent', value: value });
+        }
+
+        nextStep();
+      });
+    });
+
+    hideAllViews();
+    quizMain.style.display = 'block';
+  }
+
+  function nextStep(){
+    if(currentStep < questions.length - 1){
+      currentStep++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function computeMoto(answers){
+    let moto = 'JET 125SS';
+
+    const {uso, prioridade, categoria} = answers;
+
+    if(categoria === '50cc'){
+      moto = 'JET 50S';
+    }
+
+    if(categoria === 'scooter' && uso !== 'misto' && prioridade !== 'potencia'){
+      moto = 'JET 125SS';
+    }
+
+    if(uso === 'misto' || prioridade === 'potencia'){
+      moto = 'SHI 175 EFI';
+    }
+
+    if(uso === 'trabalho' && (prioridade === 'equilibrio' || prioridade === 'economia') && categoria === 'trail_street'){
+      moto = 'JEF 150';
+    }
+
+    return moto;
+  }
+
+  function computeCondicao(pagamento){
+    switch(pagamento){
+      case 'sem_entrada':
+        return 'Sem entrada, em até 48x* (sujeito à aprovação de crédito).';
+      case 'com_entrada':
+        return 'Com entrada (quando possível) pra reduzir as parcelas.';
+      case 'avista':
+        return 'Condição especial à vista, com possibilidade de desconto.';
+      default:
+        return 'Nossa equipe monta a melhor condição pra sua realidade, com ou sem entrada.';
+    }
+  }
+
+  function buildWhatsLink(phone, sellerName, moto, ans){
+    const txt =
+`Olá ${sellerName}! Fiz o Quiz da Shineray Moto Fácil e deu que a moto ideal pra mim é a ${moto}.
+
+Meu perfil:
+- Motivo principal: ${ans.motivo}
+- Uso: ${ans.uso}
+- Prioridade: ${ans.prioridade}
+- Categoria: ${ans.categoria}
+- Forma de pagamento: ${ans.pagamento}
+- Fluxo escolhido: ${ans.forma_compra}
+
+Pode me ajudar com uma simulação nessa moto?`;
+
+    return `https://wa.me/${phone}?text=${encodeURIComponent(txt)}`;
+  }
+
+  function showSellerFlow(moto){
+    const cond = computeCondicao(answers.pagamento);
+
+    sendBackendEvent({ type: 'quiz_complete' });
+
+    resultTitle.textContent = `Sua Shineray ideal: ${moto}`;
+    resultText.textContent =
+      `Pelo jeito que você respondeu, a ${moto} é a moto que mais faz sentido pra sua rotina e pro que você está buscando agora.`;
+    resultExtra.textContent =
+      `Condição sugerida: ${cond} Nosso time vai ajustar tudo direitinho com você no WhatsApp.`;
+
+    const motoImg = MOTO_IMAGES[moto];
+    if(motoImg){
+      resultMoto.style.display = 'block';
+      resultMotoImg.src = motoImg;
+      resultMotoImg.alt = `Foto da ${moto}`;
+    } else {
+      resultMoto.style.display = 'none';
+      resultMotoImg.removeAttribute('src');
+      resultMotoImg.removeAttribute('alt');
+    }
+
+    sellersGrid.innerHTML = '';
+    SELLERS.forEach(seller=>{
+      const link = buildWhatsLink(seller.phone, seller.name, moto, answers);
+      const row = document.createElement('div');
+      row.className = 'seller-row';
+      row.innerHTML = `
+        <div class="seller-avatar">
+          <img src="${seller.avatar}" alt="${seller.name}">
+        </div>
+        <div class="seller-info">
+          <div class="seller-name">${seller.name}</div>
+          <div class="seller-tag">${seller.tag}</div>
+        </div>
+        <a class="seller-btn" href="${link}" target="_blank" rel="noopener">
+          <span>Falar com ${seller.name}</span> 💬
+        </a>
+      `;
+
+      const btn = row.querySelector('.seller-btn');
+      if(btn){
+        btn.addEventListener('click', function(){
+          trackLeadEvents(moto, seller.name);
+          sendBackendEvent({ type: 'seller_click', sellerName: seller.name, moto: moto });
+        });
+      }
+
+      sellersGrid.appendChild(row);
+    });
+
+    hideAllViews();
+    resultBox.style.display = 'block';
+  }
+
+  function renderFinanceMotoGrid(recommendedMoto){
+    financeMotoGrid.innerHTML = '';
+    const motos = Object.keys(MOTO_IMAGES);
+
+    motos.forEach(motoName=>{
+      const card = document.createElement('div');
+      card.className = 'moto-card';
+
+      const imgSrc = MOTO_IMAGES[motoName] || '';
+      card.innerHTML = `
+        <img src="${imgSrc}" alt="${motoName}">
+        <div class="moto-name">${motoName}${motoName === recommendedMoto ? ' ⭐' : ''}</div>
+        <button class="moto-cta" data-moto="${motoName}">Simular esta moto</button>
+      `;
+
+      const btn = card.querySelector('.moto-cta');
+      btn.addEventListener('click', ()=>{
+        const chosenMoto = btn.getAttribute('data-moto');
+        const link = (PAN_LINKS[chosenMoto] || '').trim();
+
+        // tracking seleção de moto
+        sendBackendEvent({ type: 'finance_moto_select', moto: chosenMoto });
+
+        // tracking clique no PAN + Pixel Lead separado
+        sendBackendEvent({ type: 'finance_pan_click', moto: chosenMoto, link: link });
+        trackPanLeadEvents(chosenMoto);
+
+        if(!link){
+          alert('Link do PAN não encontrado para esta moto. Verifique o PAN_LINKS.');
+          return;
+        }
+
+        // abre direto o link da simulação
+        window.open(link, '_blank', 'noopener');
+
+        // mostra a moto escolhida no layout (opcional, só pra feedback visual)
+        const img = MOTO_IMAGES[chosenMoto];
+        if(img){
+          financeMoto.style.display = 'block';
+          financeMotoImg.src = img;
+          financeMotoImg.alt = `Foto da ${chosenMoto}`;
+        } else {
+          financeMoto.style.display = 'none';
+          financeMotoImg.removeAttribute('src');
+          financeMotoImg.removeAttribute('alt');
+        }
+      });
+
+      financeMotoGrid.appendChild(card);
+    });
+  }
+
+  function showFinanceFlow(recommendedMoto){
+    const cond = computeCondicao(answers.pagamento);
+
+    sendBackendEvent({ type: 'quiz_complete' });
+
+    financeTitle.textContent = `Financiamento: bora simular do jeito mais rápido 😄`;
+    financeText.textContent =
+      `Pelo seu perfil, a recomendação do quiz foi: ${recommendedMoto}. Agora escolha qual moto você quer simular no PAN.`;
+
+    financeNote.textContent =
+      `Condição informada no quiz: ${cond} Obs.: na simulação do PAN pode existir limite/entrada mínima dependendo do perfil. Mesmo assim, vale simular — o sistema mostra as possibilidades reais pra você.`;
+
+    financeMoto.style.display = 'none';
+    financeMotoImg.removeAttribute('src');
+    financeMotoImg.removeAttribute('alt');
+
+    renderFinanceMotoGrid(recommendedMoto);
+
+    hideAllViews();
+    financeBox.style.display = 'block';
+  }
+
+  function showResult(){
+    progressFill.style.width = '100%';
+    progressLabel.textContent = `Quiz concluído`;
+
+    const recommendedMoto = computeMoto(answers);
+
+    if(answers.forma_compra === 'financiamento'){
+      showFinanceFlow(recommendedMoto);
+    } else {
+      showSellerFlow(recommendedMoto);
+    }
+  }
+
+  function resetQuiz(){
+    currentStep = 0;
+    for(const k in answers){ delete answers[k]; }
+    quizStartTracked = false;
+    renderQuestion();
+  }
+
+  restartBtn1.addEventListener('click', resetQuiz);
+  restartBtn2.addEventListener('click', resetQuiz);
+
+  renderQuestion();
+</script>
+
+</body>
+</html>

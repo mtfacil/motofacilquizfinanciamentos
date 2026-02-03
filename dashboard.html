@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard Quiz Shineray Moto Fácil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:#0b1120;
+      color:#e5e7eb;
+      padding:20px;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+    }
+    h1{
+      font-size:24px;
+      margin-bottom:4px;
+    }
+    .sub{
+      font-size:13px;
+      color:#9ca3af;
+      margin-bottom:18px;
+    }
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-bottom:20px;
+    }
+    .card{
+      background:#020617;
+      border-radius:14px;
+      padding:14px 12px;
+      border:1px solid #1f2937;
+    }
+    .card-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#9ca3af;
+      margin-bottom:6px;
+    }
+    .card-value{
+      font-size:22px;
+      font-weight:700;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:13px;
+    }
+    th,td{
+      padding:6px 8px;
+      border-bottom:1px solid #1f2937;
+      text-align:left;
+    }
+    th{
+      background:#020617;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+    .section{
+      margin-bottom:22px;
+      background:#020617;
+      border-radius:14px;
+      border:1px solid #1f2937;
+      padding:12px 12px 14px;
+    }
+    .section-title{
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      font-size:11px;
+      border-radius:999px;
+      padding:2px 8px;
+      background:#172554;
+      color:#93c5fd;
+      margin-left:6px;
+    }
+    .muted{
+      font-size:12px;
+      color:#6b7280;
+    }
+    .updated{
+      font-size:11px;
+      color:#6b7280;
+      text-align:right;
+      margin-top:6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Dashboard – Quiz Shineray Moto Fácil</h1>
+    <div class="sub">
+      Acompanha em tempo quase real o funil do quiz, leads por canal (PAN vs Vendedor) e as motos mais simuladas.
+    </div>
+
+    <!-- CARDS PRINCIPAIS -->
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Inícios de Quiz</div>
+        <div class="card-value" id="cardStarts">–</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quizzes Concluídos</div>
+        <div class="card-value" id="cardCompletions">–</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Taxa de Conclusão</div>
+        <div class="card-value" id="cardConversionRate">–</div>
+      </div>
+
+      <!-- ✅ NOVOS CARDS -->
+      <div class="card">
+        <div class="card-title">Leads PAN (Simulação)</div>
+        <div class="card-value" id="cardLeadsPan">–</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Leads Vendedor (WhatsApp)</div>
+        <div class="card-value" id="cardLeadsSeller">–</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Financiamento vs À vista</div>
+        <div class="card-value" id="cardIntentSplit">–</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        Funil por Etapa
+        <span class="badge">pergunta a pergunta</span>
+      </div>
+      <div class="muted">Mostra quantos usuários visualizaram cada etapa do quiz.</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Etapa</th>
+            <th>Visualizações</th>
+          </tr>
+        </thead>
+        <tbody id="tbodySteps"></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Distribuição de Respostas</div>
+      <div class="muted">Quais opções estão sendo mais escolhidas em cada pergunta.</div>
+      <div id="answersContainer"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        Vendedores mais procurados
+        <span class="badge">cliques em WhatsApp</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Vendedor</th>
+            <th>Cliques</th>
+          </tr>
+        </thead>
+        <tbody id="tbodySellers"></tbody>
+      </table>
+    </div>
+
+    <!-- ✅ NOVO: financiamento -->
+    <div class="section">
+      <div class="section-title">
+        Financiamento (PAN) – Motos mais escolhidas
+        <span class="badge">seleção de moto</span>
+      </div>
+      <div class="muted">Quantas vezes cada moto foi escolhida no fluxo de financiamento.</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Moto</th>
+            <th>Escolhas</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyFinanceMotos"></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        Financiamento (PAN) – Cliques na simulação
+        <span class="badge">abriu o link</span>
+      </div>
+      <div class="muted">Quantos cliques abriram o link do PAN (por moto).</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Moto</th>
+            <th>Cliques (PAN)</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyPanClicks"></tbody>
+      </table>
+    </div>
+
+    <div class="updated" id="lastUpdated"></div>
+  </div>
+
+  <script>
+    function toSortedEntries(obj){
+      const entries = Object.entries(obj || {});
+      entries.sort((a,b)=> (Number(b[1]||0) - Number(a[1]||0)));
+      return entries;
+    }
+
+    async function loadStats(){
+      try{
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+
+        // cards principais
+        const starts = data.quiz?.starts || 0;
+        const completions = data.quiz?.completions || 0;
+        const rate = starts > 0 ? ((completions/starts)*100).toFixed(1) + '%' : '–';
+
+        document.getElementById('cardStarts').textContent = starts;
+        document.getElementById('cardCompletions').textContent = completions;
+        document.getElementById('cardConversionRate').textContent = rate;
+
+        // ✅ cards novos
+        const leadsPan = data.finance?.leads_pan || 0;
+        const leadsSeller = data.finance?.leads_seller || 0;
+        document.getElementById('cardLeadsPan').textContent = leadsPan;
+        document.getElementById('cardLeadsSeller').textContent = leadsSeller;
+
+        const intentFin = data.finance?.intents?.financiamento || 0;
+        const intentAv  = data.finance?.intents?.avista_cartao || 0;
+        const totalIntent = intentFin + intentAv;
+        const splitText = totalIntent > 0
+          ? `${intentFin} / ${intentAv} (${((intentFin/totalIntent)*100).toFixed(0)}% fin)`
+          : '–';
+        document.getElementById('cardIntentSplit').textContent = splitText;
+
+        // etapas
+        const stepsTbody = document.getElementById('tbodySteps');
+        stepsTbody.innerHTML = '';
+        const steps = data.quiz?.steps || {};
+        const stepKeys = Object.keys(steps).sort((a,b)=>Number(a)-Number(b));
+        stepKeys.forEach(step=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>Pergunta ${step}</td>
+            <td>${steps[step]}</td>
+          `;
+          stepsTbody.appendChild(tr);
+        });
+        if(stepKeys.length === 0){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td colspan="2">Ainda sem dados suficientes.</td>`;
+          stepsTbody.appendChild(tr);
+        }
+
+        // respostas por pergunta
+        const answersContainer = document.getElementById('answersContainer');
+        answersContainer.innerHTML = '';
+        const answers = data.quiz?.answers || {};
+        const qKeys = Object.keys(answers);
+        if(qKeys.length === 0){
+          const p = document.createElement('p');
+          p.className = 'muted';
+          p.textContent = 'Ainda não há respostas registradas.';
+          answersContainer.appendChild(p);
+        } else {
+          qKeys.forEach(qKey=>{
+            const box = document.createElement('div');
+            box.style.marginTop = '10px';
+            const title = document.createElement('div');
+            title.style.fontSize = '13px';
+            title.style.fontWeight = '600';
+            title.textContent = qKey;
+            box.appendChild(title);
+
+            const table = document.createElement('table');
+            table.innerHTML = `
+              <thead>
+                <tr>
+                  <th>Opção</th>
+                  <th>Escolhas</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            `;
+            const tbody = table.querySelector('tbody');
+            const options = answers[qKey] || {};
+            Object.keys(options).forEach(opt=>{
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${opt}</td>
+                <td>${options[opt]}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+
+            box.appendChild(table);
+            answersContainer.appendChild(box);
+          });
+        }
+
+        // vendedores
+        const sellersTbody = document.getElementById('tbodySellers');
+        sellersTbody.innerHTML = '';
+        const sellers = data.sellers || {};
+        const sellerKeys = Object.keys(sellers).sort((a,b)=>{
+          return (sellers[b].clicks || 0) - (sellers[a].clicks || 0);
+        });
+        sellerKeys.forEach(name=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${name}</td>
+            <td>${sellers[name].clicks || 0}</td>
+          `;
+          sellersTbody.appendChild(tr);
+        });
+        if(sellerKeys.length === 0){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td colspan="2">Nenhum clique em vendedores ainda.</td>`;
+          sellersTbody.appendChild(tr);
+        }
+
+        // ✅ financiamento: motos mais escolhidas
+        const financeMotosTbody = document.getElementById('tbodyFinanceMotos');
+        financeMotosTbody.innerHTML = '';
+        const motoSelects = data.finance?.moto_selects || {};
+        const selectsEntries = toSortedEntries(motoSelects);
+        if(selectsEntries.length === 0){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td colspan="2">Nenhuma escolha de moto no financiamento ainda.</td>`;
+          financeMotosTbody.appendChild(tr);
+        } else {
+          selectsEntries.forEach(([motoName, qty])=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${motoName}</td>
+              <td>${qty}</td>
+            `;
+            financeMotosTbody.appendChild(tr);
+          });
+        }
+
+        // ✅ financiamento: cliques no PAN
+        const panClicksTbody = document.getElementById('tbodyPanClicks');
+        panClicksTbody.innerHTML = '';
+        const panClicks = data.finance?.pan_clicks || {};
+        const clicksEntries = toSortedEntries(panClicks);
+        if(clicksEntries.length === 0){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td colspan="2">Nenhum clique no link do PAN ainda.</td>`;
+          panClicksTbody.appendChild(tr);
+        } else {
+          clicksEntries.forEach(([motoName, qty])=>{
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${motoName}</td>
+              <td>${qty}</td>
+            `;
+            panClicksTbody.appendChild(tr);
+          });
+        }
+
+        // horário de atualização
+        const now = new Date();
+        document.getElementById('lastUpdated').textContent =
+          'Atualizado em ' + now.toLocaleString('pt-BR');
+      } catch(e){
+        console.error(e);
+      }
+    }
+
+    loadStats();
+    setInterval(loadStats, 10000);
+  </script>
+</body>
+</html>
